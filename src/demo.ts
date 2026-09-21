@@ -1,0 +1,9 @@
+import type { Data } from './types';
+export const demoId='100000000000000001';
+export function demoData():Data{
+ const members=[{discord_id:demoId,name:'Alex Morgan',role:'owner' as const,active:true},{discord_id:'100000000000000002',name:'Sofia Rossi',role:'manager' as const,active:true},{discord_id:'100000000000000003',name:'Luca Moretti',role:'employee' as const,active:true},{discord_id:'100000000000000004',name:'Mia Bennett',role:'employee' as const,active:true}];
+ const data:Data={members,shifts:[],sales:[],entries:[],audit:[]};const now=new Date();
+ for(let i=27;i>=0;i--){for(let n=0;n<4;n++){if((i+n)%5===0)continue;const d=new Date(now);d.setDate(d.getDate()-i);d.setHours(14+n*2,0,0,0);const end=new Date(d.getTime()+(2+(i+n)%3)*3600000);if(end>now)continue;data.shifts.push({id:`s${i}-${n}`,discord_id:members[n].discord_id,started_at:d.toISOString(),ended_at:end.toISOString()});if((i+n)%3!==0)continue;const price=48000+((i*7+n*3)%10)*12000;const id=`v${i}-${n}`;data.sales.push({id,discord_id:members[n].discord_id,customer:['James Carter','Emma Wilson','Marco Riva'][i%3],vehicle:['Übermacht Sentinel','Pfister Comet','Obey Tailgater','Benefactor Schafter'][i%4],plate:`SM ${120+i}`,price,cost:price*.72,commission:price*.04,created_at:end.toISOString(),voided:false});data.entries.push({id:`e${id}`,discord_id:members[n].discord_id,description:`Vendita: ${data.sales.at(-1)!.vehicle}`,amount:price,category:'Vendita',sale_id:id,created_at:end.toISOString()},{id:`c${id}`,discord_id:demoId,description:'Pagamento fornitore',amount:-price*.72,category:'Acquisto veicolo',sale_id:null,created_at:d.toISOString()});}}
+ data.shifts.push({id:'open-demo',discord_id:members[1].discord_id,started_at:new Date(Date.now()-84*60000).toISOString(),ended_at:null});
+ data.sales.reverse();data.entries.sort((a,b)=>b.created_at.localeCompare(a.created_at));data.shifts.sort((a,b)=>b.started_at.localeCompare(a.started_at));return data;
+}
